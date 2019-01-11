@@ -822,7 +822,404 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
         </thead>
         <tbody>
             <?php
-            $selectRecord = "SELECT * FROM user_tbl";
+
+
+
+            $selectRecord = "SELECT
+              x.*,
+              y.onboarding_completion,
+              b.tried_other_onboarding,
+              a.new_project,
+              z.upgraded,
+              x.date_registered,
+              c.no_of_days_used
+            FROM (
+              SELECT
+                x.user_id,
+                CONCAT(
+                  y.user_fname,
+                  ' ',
+                  y.user_lname,
+                  ' (',
+                  y.email_address,
+                  ')'
+                ) as name,
+                y.date_registered
+              FROM
+                onboarding_funnel as x
+                JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+              WHERE
+                action IN ('Viewed Step', 'Submit')
+                AND x.timestamp >= '2018-10-10'
+                AND y.email_address NOT LIKE '%test%'
+                AND y.company NOT LIKE '%test%'
+                AND y.email_address NOT LIKE '%demo%'
+                AND y.company NOT LIKE '%demo%'
+                AND y.company NOT LIKE '%Jerome%'
+                AND y.company NOT LIKE '%Chic%'
+                AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                AND x.onboarding != 'Mobile Preparation'
+                AND x.step IN ('Intro', 'Onboarding Selection')
+                AND x.ip_address != '122.3.0.162'
+                AND y.email_address NOT LIKE '%Zac%'
+                AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                AND y.email_address NOT LIKE '%noumaan%'
+              GROUP BY
+                x.user_id
+            ) as x
+
+            LEFT JOIN (
+              SELECT
+                x.user_id,
+                CONCAT(ROUND((COUNT(x.user_id) / 9 * 100)), '%') as onboarding_completion
+              FROM (
+                (
+                  SELECT
+                    x.step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding != 'Mobile Preparation'
+                    AND x.step IN ('Intro', 'Onboarding Selection')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                  GROUP BY
+                    x.step,
+                    x.user_id
+                )
+                UNION (
+                  SELECT
+                    'Pop Up 1' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Pop Up 1%'
+                )
+                UNION (
+                  SELECT
+                    'Pop Up 2' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Pop Up 2%'
+                )
+                UNION (
+                  SELECT
+                    'Completed Aha Stage' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Aha'
+                )
+                UNION (
+                  SELECT
+                    'Completed Onboarding' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Onboarding'
+                )
+                UNION (
+                  SELECT
+                    'Explore Report' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Explore%'
+                )
+                UNION (
+                  SELECT
+                    'Feature Video 1' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Video%'
+                    AND x.step NOT LIKE '%Report%'
+                )
+                UNION (
+                  SELECT
+                    'Feature Video 2' as step,
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                    AND x.step LIKE '%Report Video%'
+                )
+              ) as x
+              GROUP BY
+                x.user_id
+            ) as y ON (x.user_id = y.user_id)
+
+            LEFT JOIN (
+              SELECT
+                y.user_id,
+                'Yes' as upgraded
+              FROM
+                smallbui_cs_portal.cs_user_activity as y
+              WHERE
+                y.user_id IN (
+                  SELECT
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding != 'Mobile Preparation'
+                    AND x.step IN ('Intro', 'Onboarding Selection')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                  GROUP BY
+                    x.user_id
+                )
+                AND y.page_name = 'Upgrade to Business'
+                AND y.activity LIKE '%Submit%'
+            ) as z ON (x.user_id = z.user_id)
+              
+            LEFT JOIN (
+              SELECT
+                y.user_id,
+                'Yes' as new_project
+              FROM
+                smallbui_cs_portal.cs_user_activity as y
+              WHERE
+                y.user_id IN (
+                  SELECT
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding != 'Mobile Preparation'
+                    AND x.step IN ('Intro', 'Onboarding Selection')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                  GROUP BY
+                    x.user_id
+                )
+                AND y.page_name LIKE '%Dashboard%'
+                AND y.activity LIKE '%Submit%'
+              GROUP BY
+                y.user_id
+            ) as a ON (a.user_id = x.user_id)
+
+            LEFT JOIN (
+              SELECT
+                y.user_id,
+                CASE WHEN COUNT(DISTINCT y.onboarding) > 1 THEN 'Yes' ELSE 'No' END as tried_other_onboarding
+              FROM
+                onboarding_funnel as y
+              WHERE
+                y.user_id IN (
+                  SELECT
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding != 'Mobile Preparation'
+                    AND x.step IN ('Intro')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                  GROUP BY
+                    x.user_id
+                )
+                AND y.onboarding NOT LIKE '%Preparation%'
+              GROUP BY
+                y.user_id
+            ) as b ON (b.user_id = x.user_id)
+              
+            LEFT JOIN (
+              SELECT
+                y.user_id,
+                COUNT(DISTINCT DATE(y.log_date)) as no_of_days_used
+              FROM
+                smallbui_cs_portal.cs_user_activity as y
+              WHERE
+                y.user_id IN (
+                  SELECT
+                    x.user_id
+                  FROM
+                    onboarding_funnel as x
+                    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+                  WHERE
+                    action IN ('Viewed Step', 'Submit')
+                    AND x.timestamp >= '2018-10-10'
+                    AND y.email_address NOT LIKE '%test%'
+                    AND y.company NOT LIKE '%test%'
+                    AND y.email_address NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%demo%'
+                    AND y.company NOT LIKE '%Jerome%'
+                    AND y.company NOT LIKE '%Chic%'
+                    AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
+                    AND x.onboarding != 'Mobile Preparation'
+                    AND x.step IN ('Intro', 'Onboarding Selection')
+                    AND x.ip_address != '122.3.0.162'
+                    AND y.email_address NOT LIKE '%Zac%'
+                    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+                    AND y.email_address NOT LIKE '%noumaan%'
+                  GROUP BY
+                    x.user_id
+                )
+              GROUP BY
+                y.user_id
+            ) as c ON (c.user_id = x.user_id)";
             $selectRecordResult = $theodore_con->query($selectRecord);
 
             if($selectRecordResult -> num_rows > 0) {
@@ -830,14 +1227,14 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                 while($Recordtbl = $selectRecordResult->fetch_assoc()) {
 
                     echo "<br>";
-                    echo "<td>",$Recordtbl['userID'], "</td>";
-                    echo "<td>",$Recordtbl['onbName'], "</td>";
-                    echo "<td>",$Recordtbl['onbComp'], "</td>";
-                    echo "<td>",$Recordtbl['onbFeat'], "</td>";
-                    echo "<td>",$Recordtbl['onbCrtd'], "</td>";
-                    echo "<td>",$Recordtbl['onbUp'], "</td>";
-                    echo "<td>",$Recordtbl['onbDate'], "</td>";
-                    echo "<td>",$Recordtbl['onbDays'], "</td>";
+                    echo "<td>",$Recordtbl['user_id'], "</td>";
+                    echo "<td>",$Recordtbl['name'], "</td>";
+                    echo "<td>",$Recordtbl['onboarding_completion'], "</td>";
+                    echo "<td>",$Recordtbl['tried_other_onboarding'], "</td>";
+                    echo "<td>",$Recordtbl['new_project'], "</td>";
+                    echo "<td>",$Recordtbl['upgraded'], "</td>";
+                    echo "<td>",$Recordtbl['date_registered'], "</td>";
+                    echo "<td>",$Recordtbl['no_of_days_used'], "</td>";
                   
                     echo "</tr>";
                 }
