@@ -867,7 +867,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                 JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
               WHERE
                 action IN ('Viewed Step', 'Submit')
-                AND x.timestamp >= '2018-10-10'
+                AND x.timestamp >= '2018-10-10' 
                 AND y.email_address NOT LIKE '%test%'
                 AND y.company NOT LIKE '%test%'
                 AND y.email_address NOT LIKE '%demo%'
@@ -877,7 +877,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                 AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
                 AND x.onboarding != 'Mobile Preparation'
                 AND x.step IN ('Intro', 'Onboarding Selection')
-                AND x.ip_address != '122.3.0.162'
+                AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
                 AND y.email_address NOT LIKE '%Zac%'
                 AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
                 AND y.email_address NOT LIKE '%noumaan%'
@@ -983,7 +983,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                     AND y.company NOT LIKE '%Chic%'
                     AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
                     AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
-                    AND x.ip_address != '122.3.0.162'
+                    AND x.ip_address != '122.3.0.162' 
                     AND y.email_address NOT LIKE '%Zac%'
                     AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
                     AND y.email_address NOT LIKE '%noumaan%'
@@ -1046,7 +1046,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                     JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
                   WHERE
                     action IN ('Viewed Step', 'Submit')
-                    AND x.timestamp >= '2018-10-10'
+                    AND x.timestamp >= '2018-10-10' 
                     AND y.email_address NOT LIKE '%test%'
                     AND y.company NOT LIKE '%test%'
                     AND y.email_address NOT LIKE '%demo%'
@@ -1055,7 +1055,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                     AND y.company NOT LIKE '%Chic%'
                     AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
                     AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
-                    AND x.ip_address != '122.3.0.162'
+                    AND x.ip_address != '122.3.0.162' 
                     AND y.email_address NOT LIKE '%Zac%'
                     AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
                     AND y.email_address NOT LIKE '%noumaan%'
@@ -1227,10 +1227,11 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                     AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
                     AND x.onboarding != 'Mobile Preparation'
                     AND x.step IN ('Intro', 'Onboarding Selection')
-                    AND x.ip_address != '122.3.0.162'
+                    AND x.ip_address != '122.3.0.162' 
                     AND y.email_address NOT LIKE '%Zac%'
                     AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
                     AND y.email_address NOT LIKE '%noumaan%'
+
                   GROUP BY
                     x.user_id
                 )
