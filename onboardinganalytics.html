@@ -532,10 +532,10 @@
                     <div class="card">
                         <div class="card-content">
                             <div class="row">
-                                <div class="col-sm-2">
-                                    <h4 style="margin-top: 7px;">Select Funnel</h4>
+                                <div class="col-sm-2" >
+                                    <label style="margin-top: 7px; padding: 0px; text-align: right; ">Select Funnel</label>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-sm-1" style="width: 20%; padding: 0px;">
                                     <select class="form-control" id="selectFunnel">
                                         <option value="dashboard">Dashboard</option>
                                         <option value="timesheet">Timesheet Onboarding Funnel - All Time</option>
@@ -549,27 +549,29 @@
                                 <div class="col-sm-2">
                                     <button type="button" class="btn btn-success btn-block" id="btnViewFunnel">View Funnel</button>
                                 </div>
-                            </div>
-                            <div class="row" style="margin-top: 10px; display: none;" id="divFromToDate">
+                          
+                            <div   id="divFromToDate">
                                 <div class="input-daterange">
                                 <div class="col-sm-1">
-                                    <h5 style="margin-top: 7px;">From</h5>
+                                    <label style="margin-top: 7px; padding-right: 5px;" >Start Date</label>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" style="width: 10%;padding: 0px;">
                                     <input type="text" class="form-control date_picker" id="inputStartDate" name="inputStartDate" value="" readonly>
                                 </div>
                                 <div class="col-sm-1">
-                                    <h5 style="margin-top: 7px;">To</h5>
+                                    <label style="margin-top: 7px;padding-right: 5px;">End Date</label>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-sm-2" style="width: 10%;padding: 0px;">
+
                                     <input type="text" class="form-control date_picker" id="inputEndDate" name="inputEndDate" value="" readonly>
                                 </div>
                                 
                             </div>
-                            <div class="col-sm-1">
+                            <div class="col-sm-1" style="">
                                     
                                       <input type="button" name="filterDate" id="filterDate" value="Filter" class="btn btn-info" />
                                 </div>  
+                                 </div>
                             <div id="divLoading" style="margin: 5px;">
                                 <section style="text-align:center;padding:50px;">
                                     <h5>Please wait one moment...</h5>
@@ -577,7 +579,7 @@
                                 </section>  
                             </div>
                         </div>  
-                        </div>
+                    
                     </div>
                 </div>
             </div>
@@ -721,18 +723,18 @@
         }
 
         $('#filterDate').click(function() {
-					var formdata = {
+                    var formdata = {
             startdate: $('#inputStartDate').val() || "0000-00-00",
             enddate: $('#inputEndDate').val() || "0000-00-00",
           };
-					$.ajax({
-						url: 'dashboard.php',
-						data: formdata,
-						success: function(data) {
-							$('#rowContent').empty().html(data);
-						}
-					});
-				});
+                    $.ajax({
+                        url: 'dashboard.php',
+                        data: formdata,
+                        success: function(data) {
+                            $('#rowContent').empty().html(data);
+                        }
+                    });
+                });
      </script>
 </body>
 </html>
