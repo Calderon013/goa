@@ -774,7 +774,10 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
     <div class="card">
       <div class="card-content" onclick="popUpReport('onboardingfunnel/userquitonboarding.php');" style="cursor: pointer; padding: 30px;">
        <h4><center>New Users Average Days Active</center></h4>
-        <h5><center>Last 7 days</center></h5>
+        <h5><center><?php
+          if (isset($_GET['startdate']) && isset($_GET['enddate'])) echo $_GET['startdate']." - ".$_GET['enddate'];
+          else echo "Last 7 days";
+        ?></center></h5>
         <h1 class="text-center" style="color: rgb(0, 61, 109);"><?php echo $outTotalUserQuitOnboarding; ?></h1>
       </div>
     </div>
