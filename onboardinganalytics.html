@@ -19,14 +19,18 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <!-- high charts -->
     <!-- datetimepicker -->
-    <link type="text/css" rel="stylesheet" href="<?php echo asset_host(); ?>/theodore/formbuilder/libs/css/jquery.datetimepicker.css" />
-    <script type="text/javascript" src="<?php echo asset_host(); ?>/theodore/formbuilder/libs/js/jquery.datetimepicker.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+<!--     <link type="text/css" rel="stylesheet" href="<?php echo asset_host(); ?>/theodore/formbuilder/libs/css/jquery.datetimepicker.css" />
+    <script type="text/javascript" src="<?php echo asset_host(); ?>/theodore/formbuilder/libs/js/jquery.datetimepicker.js"></script> -->
     <!-- datetimepicker -->
     <!-- Bootstrap Js CDN -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <!-- datatable js -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+
+
 
     <style type="text/css">
         
@@ -547,28 +551,32 @@
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 10px; display: none;" id="divFromToDate">
+                                <div class="input-daterange">
                                 <div class="col-sm-1">
                                     <h5 style="margin-top: 7px;">From</h5>
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="text" class="form-control date_picker" id="inputStartDate" value="" readonly>
+                                    <input type="text" class="form-control date_picker" id="inputStartDate" name="inputStartDate" value="" readonly>
                                 </div>
                                 <div class="col-sm-1">
                                     <h5 style="margin-top: 7px;">To</h5>
                                 </div>
                                 <div class="col-sm-2">
-                                    <input type="text" class="form-control date_picker" id="inputEndDate" value="" readonly>
+                                    <input type="text" class="form-control date_picker" id="inputEndDate" name="inputEndDate" value="" readonly>
                                 </div>
-                                <div class="col-sm-1">
-                                    <button type="button" class="btn btn-primary" onclick="$('#inputStartDate, #inputEndDate').val('');">Clear</button>
-                                </div>
+                                
                             </div>
+                            <div class="col-sm-1">
+                                    
+                                      <input type="button" name="search" id="search" value="Filter" class="btn btn-info" />
+                                </div>  
                             <div id="divLoading" style="margin: 5px;">
                                 <section style="text-align:center;padding:50px;">
                                     <h5>Please wait one moment...</h5>
                                     <img src="<?php echo asset_host(); ?>/builder/portal/controller/formsource/dashboard_graph/loadingAnimation.gif">
                                 </section>  
                             </div>
+                        </div>  
                         </div>
                     </div>
                 </div>
@@ -605,8 +613,17 @@
     <script type="text/javascript">
         $(document).ready(function() {
             retrievePanel('dashboard');
-            $('.date_picker').datetimepicker({timepicker: false, format: 'd-m-Y',scrollMonth:false, scrollInput:false, validateOnBlur:false});
+              $('#divFromToDate').show();
+            $('.input-daterange').datepicker({timepicker: false, format: 'd-m-yy',scrollMonth:false, scrollInput:false, validateOnBlur:false});
+
         });
+        
+        
+
+
+
+
+        
 
         $('#btnViewFunnel').click(function() {
             var thisFunnel = $('#selectFunnel').val();
@@ -632,7 +649,7 @@
 
         $('#selectFunnel').on('change', function() {
             if ($(this).val() == "dashboard") {
-                $('#divFromToDate').hide();
+                $('#divFromToDate').show();
             } else if ($(this).val() == "timesheet") {
                 $('#divFromToDate').show();
             } else if ($(this).val() == "paymentclaim") {
