@@ -371,7 +371,12 @@ $arrayData = array();
  // }
 
 //total users reach aha
-$query = "
+
+  if (isset($_GET['startdate'])) $startdate = " AND x.timestamp>='".$_GET['startdate']."' ";
+  else $startdate = "";
+  if (isset($_GET['enddate'])) $enddate = " AND x.timestamp<='".$_GET['enddate']."' ";
+  else $enddate = "";
+  $query = "
   SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
   (SELECT
     y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
@@ -386,7 +391,7 @@ $query = "
     AND y.company NOT LIKE '%demo%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'
+    AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
       AND y.email_address NOT LIKE '%Zac%'
       AND y.email_address NOT LIKE '%noumaan%'
       AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
@@ -395,7 +400,7 @@ $query = "
   ) 
   as a
   WHERE a.step LIKE '%Aha'";
-$outTotalUserReachAha = 0; //box1
+  $outTotalUserReachAha = 0; //box1
   $executedQuery = mysqli_query($theodore_con, $query);
   if (mysqli_num_rows($executedQuery) > 0) {
     $outTotalUserReachAha = mysqli_fetch_array($executedQuery)['total_users_aha'];
@@ -417,7 +422,7 @@ $query = "
     AND y.company NOT LIKE '%demo%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-   AND x.ip_address != '122.3.0.162'
+   AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
       AND y.email_address NOT LIKE '%noumaan%'
       AND y.email_address NOT LIKE '%Zac%'
       AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
@@ -449,7 +454,7 @@ $query = "
     AND y.email_address NOT LIKE '%noumaan%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'
+    AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
     AND y.email_address NOT LIKE '%Zac%'
     AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
   ORDER BY
@@ -733,7 +738,10 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
     <div class="card" onclick="popUpReport('onboardingfunnel/userreachaha.php');" style="cursor: pointer; padding: 25px;">
       <div class="card-content">
         <h4><center>Registrations</center></h4>
-        <h5><center>Last 7 days</center></h5>
+        <h5><center><?php
+          if (isset($_GET['startdate']) && isset($_GET['enddate'])) echo $_GET['startdate']." - ".$_GET['enddate'];
+          else echo "Last 7 days";
+        ?></center></h5>
         <h1 class="text-center" style="color: rgb(0, 61, 109);"><?php echo $outTotalUserReachAha; ?></h1>
       </div>
     </div>
@@ -742,7 +750,10 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
     <div class="card">
       <div class="card-content" onclick="popUpReport('onboardingfunnel/userfinishonboarding.php');" style="cursor: pointer; padding: 40px;">
        <h4><center>Completed Onboarding</center></h4>
-        <h5><center>Last 7 days</center></h5>
+        <h5><center><?php
+          if (isset($_GET['startdate']) && isset($_GET['enddate'])) echo $_GET['startdate']." - ".$_GET['enddate'];
+          else echo "Last 7 days";
+        ?></center></h5>
         <h1 class="text-center" style="color: rgb(0, 61, 109);"><?php echo $outTotalUserFinishOnboarding; ?></h1>
       </div>
     </div>
@@ -751,7 +762,10 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
     <div class="card">
       <div class="card-content" onclick="popUpReport('onboardingfunnel/userquitonboarding.php');" style="cursor: pointer; padding: 40px;">
        <h4><center>Conversions</center></h4>
-        <h5><center>Last 7 days</center></h5>
+        <h5><center><?php
+          if (isset($_GET['startdate']) && isset($_GET['enddate'])) echo $_GET['startdate']." - ".$_GET['enddate'];
+          else echo "Last 7 days";
+        ?></center></h5>
         <h1 class="text-center" style="color: rgb(0, 61, 109);"><?php echo $outTotalUserQuitOnboarding; ?></h1>
       </div>
     </div>
