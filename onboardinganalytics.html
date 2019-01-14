@@ -568,7 +568,7 @@
                             </div>
                             <div class="col-sm-1">
                                     
-                                      <input type="button" name="search" id="search" value="Filter" class="btn btn-info" />
+                                      <input type="button" name="filterDate" id="filterDate" value="Filter" class="btn btn-info" />
                                 </div>  
                             <div id="divLoading" style="margin: 5px;">
                                 <section style="text-align:center;padding:50px;">
@@ -614,7 +614,7 @@
         $(document).ready(function() {
             retrievePanel('dashboard');
               $('#divFromToDate').show();
-            $('.input-daterange').datepicker({timepicker: false, format: 'd-m-yy',scrollMonth:false, scrollInput:false, validateOnBlur:false});
+            $('.input-daterange').datepicker({timepicker: false, format: 'yyyy-mm-dd',scrollMonth:false, scrollInput:false, validateOnBlur:false});
 
         });
         
@@ -719,6 +719,20 @@
                 }
             });
         }
+
+        $('#filterDate').click(function() {
+					var formdata = {
+            startdate: $('#inputStartDate').val() || "0000-00-00",
+            enddate: $('#inputEndDate').val() || "0000-00-00",
+          };
+					$.ajax({
+						url: 'dashboard.php',
+						data: formdata,
+						success: function(data) {
+							$('#rowContent').empty().html(data);
+						}
+					});
+				});
      </script>
 </body>
 </html>
