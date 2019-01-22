@@ -374,6 +374,8 @@ $arrayData = array();
 
   if (isset($_GET['startdate']) && isset($_GET['enddate']))
     $daterange = " AND x.timestamp BETWEEN".$_GET['startdate']."AND".$_GET['enddate']." ";
+  else
+   $daterange = "";
   $query = "
   SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
   (SELECT
