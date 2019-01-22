@@ -372,10 +372,8 @@ $arrayData = array();
 
 //total users reach aha
 
-  if (isset($_GET['startdate'])) $startdate = " AND x.timestamp>='".$_GET['startdate']."' ";
-  else $startdate = "";
-  if (isset($_GET['enddate'])) $enddate = " AND x.timestamp<='".$_GET['enddate']."' ";
-  else $enddate = "";
+  if (isset($_GET['startdate']) && isset($_GET['enddate']))
+    $daterange = " AND x.timestamp BETWEEN".$_GET['startdate']."AND".$_GET['enddate']." ";
   $query = "
   SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
   (SELECT
@@ -391,10 +389,10 @@ $arrayData = array();
     AND y.company NOT LIKE '%demo%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
-      AND y.email_address NOT LIKE '%Zac%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+    AND x.ip_address != '122.3.0.162'".$daterange."
+    AND y.email_address NOT LIKE '%Zac%'
+    AND y.email_address NOT LIKE '%noumaan%'
+    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
   ORDER BY
    x.id DESC
   ) 
@@ -422,7 +420,7 @@ $query = "
     AND y.company NOT LIKE '%demo%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-   AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
+   AND x.ip_address != '122.3.0.162'".$daterange."
       AND y.email_address NOT LIKE '%noumaan%'
       AND y.email_address NOT LIKE '%Zac%'
       AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
@@ -454,7 +452,7 @@ $query = "
     AND y.email_address NOT LIKE '%noumaan%'
     AND y.company NOT LIKE '%Jerome%'
     AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
+    AND x.ip_address != '122.3.0.162'".$daterange."
     AND y.email_address NOT LIKE '%Zac%'
     AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
   ORDER BY
@@ -877,7 +875,7 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
                 AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
                 AND x.onboarding != 'Mobile Preparation'
                 AND x.step IN ('Intro', 'Onboarding Selection')
-                AND x.ip_address != '122.3.0.162'".$startdate.$enddate."
+                AND x.ip_address != '122.3.0.162'".$daterange."
                 AND y.email_address NOT LIKE '%Zac%'
                 AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
                 AND y.email_address NOT LIKE '%noumaan%'
