@@ -373,9 +373,9 @@ $arrayData = array();
 //total users reach aha
 
   if (isset($_GET['startdate']) && isset($_GET['enddate']))
-    $daterange = " AND x.timestamp BETWEEN".$_GET['startdate']."AND".$_GET['enddate']." ";
+    $daterange = " AND y.date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
   else
-   $daterange = "";
+    $daterange = " AND y.date_registered BETWEEN '".date("Y-m-d", strtotime('-7 days'))."' AND '".date("Y-m-d")."' ";
   $query = "
   SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
   (SELECT
