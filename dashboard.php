@@ -370,103 +370,140 @@ $arrayData = array();
  //   $strOutData = "[]";
  // }
 
-//total users reach aha
 
-  if (isset($_GET['startdate']) && isset($_GET['enddate']))
-    $daterange = " AND y.date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
-  else
-    $daterange = " AND y.date_registered BETWEEN '".date("Y-m-d", strtotime('-7 days'))."' AND '".date("Y-m-d")."' ";
-  $query = "
-  SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
-  (SELECT
-    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
-  FROM
-    onboarding_funnel as x
-    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+if (isset($_GET['startdate']) && isset($_GET['enddate']))
+  $daterange = " AND date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
+else
+  $daterange = " AND DATE(date_registered) >= CURRENT_DATE() - INTERVAL 7 DAY ";
+//total users reach aha
+/*$query = "
+  SELECT
+    COUNT(DISTINCT a.email_address) as total_users_aha
+  FROM (
+    SELECT
+      y.email_address, x.step
+    FROM
+      onboarding_funnel as x
+    JOIN
+      smallbui_cs_portal.cs_users as y
+    ON
+      x.user_id = y.user_id
+    WHERE
+      x.action IN ('Viewed Step','Submit')
+      AND x.ip_address != '122.3.0.162'
+      AND y.company NOT LIKE '%Chic%'
+      AND y.company NOT LIKE '%demo%'
+      AND y.company NOT LIKE '%Jerome%'
+      AND y.company NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%demo%'
+      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+      AND y.email_address NOT LIKE '%noumaan%'
+      AND y.email_address NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%Zac%'
+      ".$daterange."
+    ORDER BY
+      x.id DESC
+  ) as a
   WHERE
-    action IN ('Viewed Step', 'Submit')
-    AND y.email_address NOT LIKE '%test%'
-    AND y.company NOT LIKE '%test%'
-    AND y.email_address NOT LIKE '%demo%'
-    AND y.company NOT LIKE '%demo%'
-    AND y.company NOT LIKE '%Jerome%'
-    AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'".$daterange."
-    AND y.email_address NOT LIKE '%Zac%'
-    AND y.email_address NOT LIKE '%noumaan%'
-    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-  ORDER BY
-   x.id DESC
-  ) 
-  as a
-  WHERE a.step LIKE '%Aha'";
-  $outTotalUserReachAha = 0; //box1
+    a.step LIKE '%Aha'";*/
+  $query = "
+    SELECT COUNT(DISTINCT user_id) as registered_users
+    FROM smallbui_cs_portal.cs_users
+    WHERE email_address NOT LIKE '%TEST%'
+    AND company NOT LIKE '%TEST%'
+    AND company NOT LIKE '%demo%'
+    AND email_address NOT LIKE '%demo%'
+    AND email_address NOT LIKE '%wordpress%'
+    AND email_address NOT LIKE '%trial%'
+    AND email_address NOT LIKE '%zac%'
+    AND email_address NOT LIKE '%chic%'
+    AND email_address NOT LIKE '%pogi%' 
+    AND email_address NOT LIKE '%lophils%'
+    ".$daterange."
+    ORDER BY user_id DESC";
+  $outTotalUserReachAha = 0;
   $executedQuery = mysqli_query($theodore_con, $query);
   if (mysqli_num_rows($executedQuery) > 0) {
-    $outTotalUserReachAha = mysqli_fetch_array($executedQuery)['total_users_aha'];
+    $outTotalUserReachAha = mysqli_fetch_array($executedQuery)['registered_users'];
   }
+
+if (isset($_GET['startdate']) && isset($_GET['enddate']))
+  $daterange = " AND y.date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
+else
+  $daterange = " AND DATE(y.date_registered) >= CURRENT_DATE() - INTERVAL 7 DAY ";
 
 //total users finished onboarding
 $query = "
-  SELECT COUNT(DISTINCT a.email_address) as total_users_completed FROM
-  (SELECT
-    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
-  FROM
-    onboarding_funnel as x
-    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-  WHERE
-    action IN ('Viewed Step', 'Submit')
-    AND y.email_address NOT LIKE '%test%'
-    AND y.company NOT LIKE '%test%'
-    AND y.email_address NOT LIKE '%demo%'
-    AND y.company NOT LIKE '%demo%'
-    AND y.company NOT LIKE '%Jerome%'
-    AND y.company NOT LIKE '%Chic%'
-   AND x.ip_address != '122.3.0.162'".$daterange."
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND y.email_address NOT LIKE '%Zac%'
+  SELECT
+    COUNT(DISTINCT a.email_address) as total_users_completed
+  FROM (
+    SELECT
+      y.email_address, x.step
+    FROM
+      onboarding_funnel as x
+    JOIN
+      smallbui_cs_portal.cs_users as y
+    ON
+      x.user_id = y.user_id
+    WHERE
+      x.action IN ('Viewed Step', 'Submit')
+      AND x.ip_address != '122.3.0.162'
+      AND y.company NOT LIKE '%Chic%'
+      AND y.company NOT LIKE '%demo%'
+      AND y.company NOT LIKE '%Jerome%'
+      AND y.company NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%demo%'
       AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-
-  ORDER BY
-   x.id DESC
-  ) 
-  as a
-  WHERE a.step LIKE '%Onboarding'";
-  $outTotalUserFinishOnboarding = 0; //box2
-  $executedQuery = mysqli_query($theodore_con, $query);
-  if (mysqli_num_rows($executedQuery) > 0) {
-    $outTotalUserFinishOnboarding = mysqli_fetch_array($executedQuery)['total_users_completed'];
-  }
+      AND y.email_address NOT LIKE '%noumaan%'
+      AND y.email_address NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%Zac%'
+      ".$daterange."
+    ORDER BY
+      x.id DESC
+  ) as a
+  WHERE
+    a.step LIKE '%Onboarding'";
+$outTotalUserFinishOnboarding = 0;
+$executedQuery = mysqli_query($theodore_con, $query);
+if (mysqli_num_rows($executedQuery) > 0) {
+  $outTotalUserFinishOnboarding = mysqli_fetch_array($executedQuery)['total_users_completed'];
+}
 
 //total users quit onboarding
 $query = "
-  SELECT COUNT(DISTINCT a.email_address) as total_users_exit FROM
-  (SELECT
-    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
-  FROM
-    onboarding_funnel as x
-    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+  SELECT
+    COUNT(DISTINCT a.email_address) as total_users_exit
+  FROM (
+    SELECT
+      y.email_address, x.action
+    FROM
+      onboarding_funnel as x
+    JOIN
+      smallbui_cs_portal.cs_users as y
+    ON
+      x.user_id = y.user_id
+    WHERE
+      x.ip_address != '122.3.0.162'
+      AND y.company NOT LIKE '%Chic%'
+      AND y.company NOT LIKE '%demo%'
+      AND y.company NOT LIKE '%Jerome%'
+      AND y.company NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%demo%'
+      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+      AND y.email_address NOT LIKE '%noumaan%'
+      AND y.email_address NOT LIKE '%test%'
+      AND y.email_address NOT LIKE '%Zac%'
+      ".$daterange."
+    ORDER BY
+      x.id DESC
+  ) as a
   WHERE
-    y.email_address NOT LIKE '%test%'
-    AND y.company NOT LIKE '%test%'
-    AND y.email_address NOT LIKE '%demo%'
-    AND y.company NOT LIKE '%demo%'
-    AND y.email_address NOT LIKE '%noumaan%'
-    AND y.company NOT LIKE '%Jerome%'
-    AND y.company NOT LIKE '%Chic%'
-    AND x.ip_address != '122.3.0.162'".$daterange."
-    AND y.email_address NOT LIKE '%Zac%'
-    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-  ORDER BY
-   x.id DESC
-  ) 
-  as a
-  WHERE a.action = 'Exit Onboarding'";
-$outTotalUserQuitOnboarding = 0; //box3+4
-  $executedQuery = mysqli_query($theodore_con, $query);
-  if (mysqli_num_rows($executedQuery) > 0) {
-    $outTotalUserQuitOnboarding = mysqli_fetch_array($executedQuery)['total_users_exit'];
-  }
+    a.action = 'Exit Onboarding'";
+$outTotalUserQuitOnboarding = 0;
+$executedQuery = mysqli_query($theodore_con, $query);
+if (mysqli_num_rows($executedQuery) > 0) {
+  $outTotalUserQuitOnboarding = mysqli_fetch_array($executedQuery)['total_users_exit'];
+}
 
 //total users no onboarding
 $query = "
