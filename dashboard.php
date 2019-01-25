@@ -1,8 +1,5 @@
 <?php
- // include "../../../../../builder/controller/connection.php";
- // include "../../../../../theodore/formbuilder/controller/connection.php";
- // include "../../../sb_tools/header.php";
-  include ("dbconn.php");
+include ("dbconn.php");
 
 
 $outTimesheet = ""; $outExpense = ""; $outPaymentClaim = ""; $outNoPreference = "";
@@ -370,140 +367,103 @@ $arrayData = array();
  //   $strOutData = "[]";
  // }
 
-
-if (isset($_GET['startdate']) && isset($_GET['enddate']))
-  $daterange = " AND date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
-else
-  $daterange = " AND DATE(date_registered) >= CURRENT_DATE() - INTERVAL 7 DAY ";
 //total users reach aha
-/*$query = "
-  SELECT
-    COUNT(DISTINCT a.email_address) as total_users_aha
-  FROM (
-    SELECT
-      y.email_address, x.step
-    FROM
-      onboarding_funnel as x
-    JOIN
-      smallbui_cs_portal.cs_users as y
-    ON
-      x.user_id = y.user_id
-    WHERE
-      x.action IN ('Viewed Step','Submit')
-      AND x.ip_address != '122.3.0.162'
-      AND y.company NOT LIKE '%Chic%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%Zac%'
-      ".$daterange."
-    ORDER BY
-      x.id DESC
-  ) as a
-  WHERE
-    a.step LIKE '%Aha'";*/
+
+  if (isset($_GET['startdate']) && isset($_GET['enddate']))
+    $daterange = " AND y.date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
+  else
+    $daterange = " AND y.date_registered BETWEEN '".date("Y-m-d", strtotime('-7 days'))."' AND '".date("Y-m-d")."' ";
   $query = "
-    SELECT COUNT(DISTINCT user_id) as registered_users
-    FROM smallbui_cs_portal.cs_users
-    WHERE email_address NOT LIKE '%TEST%'
-    AND company NOT LIKE '%TEST%'
-    AND company NOT LIKE '%demo%'
-    AND email_address NOT LIKE '%demo%'
-    AND email_address NOT LIKE '%wordpress%'
-    AND email_address NOT LIKE '%trial%'
-    AND email_address NOT LIKE '%zac%'
-    AND email_address NOT LIKE '%chic%'
-    AND email_address NOT LIKE '%pogi%' 
-    AND email_address NOT LIKE '%lophils%'
-    ".$daterange."
-    ORDER BY user_id DESC";
-  $outTotalUserReachAha = 0;
+  SELECT COUNT(DISTINCT a.email_address) as total_users_aha FROM
+  (SELECT
+    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
+  FROM
+    onboarding_funnel as x
+    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
+  WHERE
+    action IN ('Viewed Step', 'Submit')
+    AND y.email_address NOT LIKE '%test%'
+    AND y.company NOT LIKE '%test%'
+    AND y.email_address NOT LIKE '%demo%'
+    AND y.company NOT LIKE '%demo%'
+    AND y.company NOT LIKE '%Jerome%'
+    AND y.company NOT LIKE '%Chic%'
+    AND x.ip_address != '122.3.0.162'".$daterange."
+    AND y.email_address NOT LIKE '%Zac%'
+    AND y.email_address NOT LIKE '%noumaan%'
+    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+  ORDER BY
+   x.id DESC
+  ) 
+  as a
+  WHERE a.step LIKE '%Aha'";
+  $outTotalUserReachAha = 0; //box1
   $executedQuery = mysqli_query($theodore_con, $query);
   if (mysqli_num_rows($executedQuery) > 0) {
-    $outTotalUserReachAha = mysqli_fetch_array($executedQuery)['registered_users'];
+    $outTotalUserReachAha = mysqli_fetch_array($executedQuery)['total_users_aha'];
   }
-
-if (isset($_GET['startdate']) && isset($_GET['enddate']))
-  $daterange = " AND y.date_registered BETWEEN '".$_GET['startdate']."' AND '".$_GET['enddate']."' ";
-else
-  $daterange = " AND DATE(y.date_registered) >= CURRENT_DATE() - INTERVAL 7 DAY ";
 
 //total users finished onboarding
 $query = "
-  SELECT
-    COUNT(DISTINCT a.email_address) as completed_last_seven_days
-  FROM (
-    SELECT
-      y.email_address, x.step
-    FROM
-      onboarding_funnel as x
-    JOIN
-      smallbui_cs_portal.cs_users as y
-    ON
-      x.user_id = y.user_id
-    WHERE
-      x.action IN ('Viewed Step', 'Submit')
-      AND x.ip_address != '122.3.0.162'
-      AND y.company NOT LIKE '%Chic%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%Zac%'
-      ".$daterange."
-    ORDER BY
-      x.id DESC
-  ) as a
+  SELECT COUNT(DISTINCT a.email_address) as total_users_completed FROM
+  (SELECT
+    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
+  FROM
+    onboarding_funnel as x
+    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
   WHERE
-    a.step LIKE '%Onboarding'";
-$outTotalUserFinishOnboarding = 0;
-$executedQuery = mysqli_query($theodore_con, $query);
-if (mysqli_num_rows($executedQuery) > 0) {
-  $outTotalUserFinishOnboarding = mysqli_fetch_array($executedQuery)['completed_last_seven_days'];
-}
+    action IN ('Viewed Step', 'Submit')
+    AND y.email_address NOT LIKE '%test%'
+    AND y.company NOT LIKE '%test%'
+    AND y.email_address NOT LIKE '%demo%'
+    AND y.company NOT LIKE '%demo%'
+    AND y.company NOT LIKE '%Jerome%'
+    AND y.company NOT LIKE '%Chic%'
+   AND x.ip_address != '122.3.0.162'".$daterange."
+      AND y.email_address NOT LIKE '%noumaan%'
+      AND y.email_address NOT LIKE '%Zac%'
+      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+
+  ORDER BY
+   x.id DESC
+  ) 
+  as a
+  WHERE a.step LIKE '%Onboarding'";
+  $outTotalUserFinishOnboarding = 0; //box2
+  $executedQuery = mysqli_query($theodore_con, $query);
+  if (mysqli_num_rows($executedQuery) > 0) {
+    $outTotalUserFinishOnboarding = mysqli_fetch_array($executedQuery)['total_users_completed'];
+  }
 
 //total users quit onboarding
 $query = "
-  SELECT
-    COUNT(DISTINCT a.email_address) as total_users_exit
-  FROM (
-    SELECT
-      y.email_address, x.action
-    FROM
-      onboarding_funnel as x
-    JOIN
-      smallbui_cs_portal.cs_users as y
-    ON
-      x.user_id = y.user_id
-    WHERE
-      x.ip_address != '122.3.0.162'
-      AND y.company NOT LIKE '%Chic%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%Zac%'
-      ".$daterange."
-    ORDER BY
-      x.id DESC
-  ) as a
+  SELECT COUNT(DISTINCT a.email_address) as total_users_exit FROM
+  (SELECT
+    y.company, CONCAT(y.user_fname,' ',y.user_lname) as name, y.email_address, y.preference, x.*
+  FROM
+    onboarding_funnel as x
+    JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
   WHERE
-    a.action = 'Exit Onboarding'";
-$outTotalUserQuitOnboarding = 0;
-$executedQuery = mysqli_query($theodore_con, $query);
-if (mysqli_num_rows($executedQuery) > 0) {
-  $outTotalUserQuitOnboarding = mysqli_fetch_array($executedQuery)['total_users_exit'];
-}
+    y.email_address NOT LIKE '%test%'
+    AND y.company NOT LIKE '%test%'
+    AND y.email_address NOT LIKE '%demo%'
+    AND y.company NOT LIKE '%demo%'
+    AND y.email_address NOT LIKE '%noumaan%'
+    AND y.company NOT LIKE '%Jerome%'
+    AND y.company NOT LIKE '%Chic%'
+    AND x.ip_address != '122.3.0.162'".$daterange."
+    AND y.email_address NOT LIKE '%Zac%'
+    AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
+  ORDER BY
+   x.id DESC
+  ) 
+  as a
+  WHERE a.action = 'Exit Onboarding'";
+$outTotalUserQuitOnboarding = 0; //box3+4
+  $executedQuery = mysqli_query($theodore_con, $query);
+  if (mysqli_num_rows($executedQuery) > 0) {
+    $outTotalUserQuitOnboarding = mysqli_fetch_array($executedQuery)['total_users_exit'];
+  }
 
 //total users no onboarding
 $query = "
@@ -566,17 +526,6 @@ $query = "
   GROUP BY email_address
   ORDER BY user_id DESC";
 $outNewUserToday = "";
- // $executedQuery = mysqli_query($csportal_con, $query);
- // if (mysqli_num_rows($executedQuery) > 0) {
- //   while ($row = mysqli_fetch_array($executedQuery)) {
- //     $outNewUserToday .= "
- //       <tr>
- //         <td>".$row['user_id']."</td>
- //         <td>".$row['company']."</td>
- //         <td>".$row['email_address']."</td>
- //       </tr>";
- //   }
- // }
 
 //user registration source
 $query = "
@@ -599,192 +548,16 @@ $query = "
   ) as x
   GROUP BY x.registered_from";
 $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegistrationGoogleAds = 0; $outUserRegistrationWebSearch = 0;
- // $executedQuery = mysqli_query($csportal_con, $query);
- // if (mysqli_num_rows($executedQuery) > 0) {
- //   while ($row = mysqli_fetch_array($executedQuery)) {
- //     if ($row['registered_From'] == "") {
- //       $outUserRegistrationWebSearch = $row['count'];
- //     } else if ($row['registered_From'] == "ads.smallbuilders.com.au/facebooksup151018-residential_builders/" || $row['registered_From'] == "sb ads") {
- //       $outUserRegistrationFacebook = $row['count'];
- //     } else if ($row['registered_From'] == "ads.smallbuilders.com.au/Linkedin-101818-residential_builders") {
- //       $outUserRegistrationLinkedIn = $row['count'];
- //     } else if ($row['registered_From'] == "") {
- //       $outUserRegistrationWebSearch = $row['count'];
- //     }
- //   }
- // }
-
-  $query = "(
-    SELECT
-      x.step,
-      COUNT(DISTINCT x.user_id) as count
-    FROM
-      onboarding_funnel as x
-      JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-    WHERE
-      action IN ('Viewed Step', 'Submit')
-      AND x.timestamp >= '2018-10-10'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%Chic%'
-      AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
-      AND x.onboarding != 'Mobile Preparation'
-      AND x.step IN ('Intro', 'Onboarding Selection')
-      AND x.ip_address != '122.3.0.162'
-      AND y.email_address NOT LIKE '%Zac%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND x.timestamp >= (CURRENT_DATE() - INTERVAL 7 DAY)
-    GROUP BY
-      x.step
-  )
-  UNION (
-    SELECT
-      'Completed Aha Stage' as step,
-      COUNT(DISTINCT x.user_id) as count
-    FROM
-      onboarding_funnel as x
-      JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-    WHERE
-      action IN ('Viewed Step', 'Submit')
-      AND x.timestamp >= '2018-10-10'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%Chic%'
-      AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
-      AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
-      AND x.ip_address != '122.3.0.162'
-      AND y.email_address NOT LIKE '%Zac%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND x.timestamp >= (CURRENT_DATE() - INTERVAL 7 DAY)
-      AND x.step LIKE '%Aha'
-  )
-  UNION (
-    SELECT
-      'Completed Onboarding' as step,
-      COUNT(DISTINCT x.user_id) as count
-    FROM
-      onboarding_funnel as x
-      JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-    WHERE
-      action IN ('Viewed Step', 'Submit')
-      AND x.timestamp >= '2018-10-10'
-      AND y.email_address NOT LIKE '%test%'
-      AND y.company NOT LIKE '%test%'
-      AND y.email_address NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%demo%'
-      AND y.company NOT LIKE '%Jerome%'
-      AND y.company NOT LIKE '%Chic%'
-      AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
-      AND x.onboarding NOT IN ('Site Diary', 'CEO Report', 'Forecast')
-      AND x.ip_address != '122.3.0.162'
-      AND y.email_address NOT LIKE '%Zac%'
-      AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-      AND y.email_address NOT LIKE '%noumaan%'
-      AND x.step LIKE '%Onboarding'
-      AND x.timestamp >= (CURRENT_DATE() - INTERVAL 7 DAY)
-  )
-  UNION (
-    SELECT
-      'new project' as step,
-      COUNT(DISTINCT y.user_id) as count
-    FROM
-      smallbui_cs_portal.cs_user_activity as y
-    WHERE
-      y.user_id IN (
-        SELECT
-          x.user_id
-        FROM
-          onboarding_funnel as x
-          JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-        WHERE
-          action IN ('Viewed Step', 'Submit')
-          AND x.timestamp >= '2018-10-10'
-          AND y.email_address NOT LIKE '%test%'
-          AND y.company NOT LIKE '%test%'
-          AND y.email_address NOT LIKE '%demo%'
-          AND y.company NOT LIKE '%demo%'
-          AND y.company NOT LIKE '%Jerome%'
-          AND y.company NOT LIKE '%Chic%'
-          AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
-          AND x.onboarding != 'Mobile Preparation'
-          AND x.step IN ('Intro', 'Onboarding Selection')
-          AND x.ip_address != '122.3.0.162'
-          AND y.email_address NOT LIKE '%Zac%'
-          AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-          AND y.email_address NOT LIKE '%noumaan%'
-        GROUP BY
-          x.user_id
-      )
-      AND y.page_name LIKE '%Dashboard%'
-      AND y.activity LIKE '%Submit%'
-      AND y.log_date >= (CURRENT_DATE() - INTERVAL 7 DAY)
-  )
-  UNION (
-    SELECT
-      'converted' as step,
-      COUNT(DISTINCT y.user_id) as count
-    FROM
-      smallbui_cs_portal.cs_user_activity as y
-    WHERE
-      y.user_id IN (
-        SELECT
-          x.user_id
-        FROM
-          smallbui_theodore.onboarding_funnel as x
-          JOIN smallbui_cs_portal.cs_users as y ON (x.user_id = y.user_id)
-        WHERE
-          action IN ('Viewed Step', 'Submit')
-          AND x.timestamp >= '2018-10-10'
-          AND y.email_address NOT LIKE '%test%'
-          AND y.company NOT LIKE '%test%'
-          AND y.email_address NOT LIKE '%demo%'
-          AND y.company NOT LIKE '%demo%'
-          AND y.company NOT LIKE '%Jerome%'
-          AND y.company NOT LIKE '%Chic%'
-          AND CONCAT(y.user_fname, '', y.user_lname) NOT LIKE '%test%'
-          AND x.onboarding != 'Mobile Preparation'
-          AND x.step IN ('Intro', 'Onboarding Selection')
-          AND x.ip_address != '122.3.0.162'
-          AND y.email_address NOT LIKE '%Zac%'
-          AND y.email_address NOT LIKE '%efficient.fitness@outlook.com%'
-          AND y.email_address NOT LIKE '%noumaan%'
-        GROUP BY
-          x.user_id
-      )
-      AND y.page_name LIKE '%Upgrade to Business%'
-      AND y.activity LIKE '%Submit%'
-      AND y.log_date >= (CURRENT_DATE() - INTERVAL 7 DAY)
-  )";
-  $executedQuery = mysqli_query($theodore_con, $query);
-  if (mysqli_num_rows($executedQuery) > 0) {
-    $of_Intro = mysqli_fetch_array($executedQuery)['count'];
-    $of_CompletedAhaStage = mysqli_fetch_array($executedQuery)['count'];
-    $of_completedOnboarding = mysqli_fetch_array($executedQuery)['count'];;
-    $of_NewProject = mysqli_fetch_array($executedQuery)['count'];
-    $of_Converted = mysqli_fetch_array($executedQuery)['count'];
-  }
 
 ?>
 
+<!DOCTYPE html>
+<html>
+<head>
 
-
-<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" type="text/css"></link>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css" type="text/css"></link>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" type="text/css"></link>
-<link rel="stylesheet" href="../../extensions/Editor/css/editor.dataTables.min.css" type="text/css"></link>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
-<script src="../../extensions/Editor/js/dataTables.editor.min.js"></script> -->
-
+<link rel="stylesheet" href="css/bootstrap.min.css"> 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="css/dataTables.bootstrap.css"/>
 <style>
 .custom-breadcrumb{
     list-style:none;
@@ -928,6 +701,9 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
 
 
 </style>
+</head>
+<body>
+
 
 <div class="row">
   <div class="col-sm-3">
@@ -984,14 +760,14 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
 <div class="row">
 <ul class="steps" style="width: 120%;">
   <center>
-  <li style=" width: 10%; border-radius: 3px ;"><a href="#" title=""><span>Intro</span><br><br><span><?php echo $of_Intro; ?></span></a></li>
-  <li style="width: 10%;"><a href="#" title=""><span>On Boarding Selection</span><br><span>0</span></a></li>
-  <li ><a href="#" title=""><span>Completed Aha Phase</span><br><span><?php echo $of_CompletedAhaStage; ?></span></a></li>
-  <li ><a href="#" title=""><span>Complete Onboarding</span><br><span><?php echo $of_completedOnboarding; ?></span></a></li>
-   <li style="border-right: 0   "><a href="#" title=""><span>New <br>Project<br></span><br><span><?php echo $of_NewProject; ?></span></a></li>
-     <li style="border-right: 30px "><a href="#" title=""><span>Completed<br>Business Profile<br></span><br><span>0</span></a></li>
-       <li style=" border-right: 30px "><a href="#" title=""><span>Added <br> Contacts</span><br><span>0</span></a></li>
-  <li style=" border-right: 25px  solid transparent ; border-radius: 3px; /* width: arrow width */"><a href="#" title="" ><span>Converted</span><br><br><span><?php echo $of_Converted; ?></span></a></li>  
+  <li style=" width: 10%; border-radius: 3px ;"><a href="#" title=""><span>Intro</span><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+  <li style="width: 10%;"><a href="#" title=""><span>On Boarding Selection</span><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+  <li ><a href="#" title=""><span>Completed Aha Phase</span><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+  <li ><a href="#" title=""><span>Complete Onboarding</span><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+   <li style="border-right: 0   "><a href="#" title=""><span>New <br>Project<br></span><Br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+     <li style="border-right: 30px "><a href="#" title=""><span>Completed <br>  Business Profile<br></span><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+       <li style=" border-right: 30px "><a href="#" title=""><span>Added <br> Contacts</span><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>
+  <li style=" border-right: 25px  solid transparent ; border-radius: 3px; /* width: arrow width */"><a href="#" title="" ><span>Converted</span><br><br><span>25 Users</span><br><span><?php echo $outTotalUserQuitOnboarding; ?></span></a></li>  
 </center>
 </ul>
 </div>
@@ -999,26 +775,15 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
 
 <div style="margin-left: 1%; margin-bottom: 5px;">
 
-    <div class="col-sm-12" style="display: inline-block;">
+    
         <div class="card">
             <div class="card-content">
            <div class="dropdown" style="display: ">
-          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+          <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Onbaording User Summary
            <span class="caret"></span></button>
-           <ul class="dropdown-menu">
-          <li><a href="#">Onbaording User Summary</a></li>
-         <li><a href="#">Link 2</a></li>
-        <li><a href="#">Link 3</a></li>
+         
     </ul>
-  </div>
-</div>
-              
-            </div>
-        </div>
-</div>
-
-  <div style="margin-left: 2%;  ">
-    <table id="dataTable" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
+  </div> <table id="dataTables-example" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
 
    
         <thead>
@@ -1460,9 +1225,33 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
         ?>
         </tbody>
     </table>
-</div>
 
-<div id="divForTableReport"></div>
+              
+          
+  
+
+                            </div>
+                        </div>
+                      
+<!-- End of first row (copy and paste this block to append additional rows -->
+<!-- Paste additional rows here -->
+      </div>
+      <div id="divForTableReport"></div>
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.dataTables.js"></script>
+<script src="js/dataTables.bootstrap.js"></script>
+<script>
+$(document).ready(function () {
+$('#dataTables-example').dataTable();
+});
+</script>
+
+
+
+
+
 
 <script type="text/javascript">
   function loadTableReport(url) {
@@ -1573,12 +1362,14 @@ $outUserRegistrationFacebook = 0; $outUserRegistrationLinkedIn = 0; $outUserRegi
     });
 </script>
 
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.dataTables.js"></script>
+<script src="js/dataTables.bootstrap.js"></script>
 <script>
-    $(document).ready(function() {
-    $('#dataTable').DataTable( {      
-         "searching": true,
-         "paging": true, 
-         "info": true,         
-         "lengthChange":true 
-    } );
-  </script>
+$(document).ready(function () {
+$('#dataTables-example').dataTable();
+});
+</script>
+</body>
+</html>
