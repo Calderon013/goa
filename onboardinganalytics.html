@@ -9,29 +9,12 @@
 
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-    <!-- Bootstrap CSS CDN -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- datatable css -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
-    <!-- high charts -->
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <!-- high charts -->
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
     <!-- datetimepicker -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
-<!--     <link type="text/css" rel="stylesheet" href="<?php echo asset_host(); ?>/theodore/formbuilder/libs/css/jquery.datetimepicker.css" />
-    <script type="text/javascript" src="<?php echo asset_host(); ?>/theodore/formbuilder/libs/js/jquery.datetimepicker.js"></script> -->
-    <!-- datetimepicker -->
-    <!-- Bootstrap Js CDN -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- datatable js -->
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
-
-
+<link rel="stylesheet" href="css/dataTables.bootstrap.css"/>
     <style type="text/css">
         
         @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
@@ -519,7 +502,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="onboardinganalytics.php?ui=<?php echo base64_encode($dec_ui); ?>&ci=<?php echo base64_encode($dec_ci); ?>" aria-expanded="false">
+                    <a href="onboardinganalytics.html>" aria-expanded="false">
                         <i class="glyphicon glyphicon-stats"></i>
                         Onboard Analytics
                     </a>
@@ -742,5 +725,16 @@
                     });
                 });
      </script>
+   
+<script>
+    $(document).ready(function() {
+    $('#dataTable').DataTable( {      
+         "searching": true,
+         "paging": true, 
+         "info": true,         
+         "lengthChange":true 
+    } );
+  </script>
+
 </body>
 </html>
